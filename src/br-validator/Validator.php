@@ -19,7 +19,7 @@ class Validator extends BaseValidator
     * @param string $value
     * @return boolean
     */
-    protected function validateCelularComDdd($attribute, $value)
+    protected function validateCelularComDdd($attribute, $value, $parameters = [])
     {
         return preg_match('/^\(\d{2}\)\s?\d{4,5}-\d{4}$/', $value) > 0;
     }
@@ -31,7 +31,7 @@ class Validator extends BaseValidator
     * @return boolean
     */
 
-    protected function validateTelefoneComDdd($attribute, $value)
+    protected function validateTelefoneComDdd($attribute, $value, $parameters = [])
     {
         return preg_match('/^\(\d{2}\)\s?\d{4}-\d{4}$/', $value) > 0;
     }
@@ -43,7 +43,7 @@ class Validator extends BaseValidator
     * @param string $value
     * @return boolean
     */
-    protected function validateCelular($attribute, $value)
+    protected function validateCelular($attribute, $value, $parameters = [])
     {
         return preg_match('/^\d{4,5}-\d{4}$/', $value) > 0;   
     }
@@ -54,7 +54,7 @@ class Validator extends BaseValidator
     * @param string $value
     * @return boolean
     */
-    protected function validateTelefone($attribute, $value)
+    protected function validateTelefone($attribute, $value, $parameters = [])
     {
         return preg_match('/^\d{4}-\d{4}$/', $value) > 0;
     }
@@ -65,7 +65,7 @@ class Validator extends BaseValidator
     * @param string $value
     * @return boolean
     */
-    protected function validateFormatoCpf($attribute, $value)
+    protected function validateFormatoCpf($attribute, $value, $parameters = [])
     {
         return preg_match('/^\d{3}\.\d{3}\.\d{3}-\d{2}$/', $value) > 0;
     }
@@ -76,7 +76,7 @@ class Validator extends BaseValidator
     * @param string $value
     * @return boolean
     */
-    protected function validateFormatoCnpj($attribute, $value)
+    protected function validateFormatoCnpj($attribute, $value, $parameters = [])
     {
         return preg_match('/^\d{2}\.\d{3}\.\d{3}\/\d{4}-\d{2}$/', $value) > 0;
     }
@@ -88,7 +88,7 @@ class Validator extends BaseValidator
     * @return boolean
     */
 
-    protected function validateCpf($attribute, $value)
+    protected function validateCpf($attribute, $value, $parameters = [])
     {
         $c = preg_replace('/\D/', '', $value);
 
@@ -118,7 +118,7 @@ class Validator extends BaseValidator
     * @param string $value
     * @return boolean
     */
-    protected function validateCnpj($attribute, $value)
+    protected function validateCnpj($attribute, $value, $parameters = [])
     {
         $c = preg_replace('/\D/', '', $value);
 
@@ -160,7 +160,7 @@ class Validator extends BaseValidator
     * @return boolean
     */
 
-    protected function validateCnh($attribute, $value)
+    protected function validateCnh($attribute, $value, $parameters = [])
     {
         $ret = false;
         
@@ -203,7 +203,7 @@ class Validator extends BaseValidator
     * @return boolean
     */
 
-    public function validateData($attribute, $value)
+    public function validateData($attribute, $value, $parameters = [])
     {
         $regex = '/^(0[1-9]|[1-2][0-9]|3[01])\/(0[1-9]|1[0-2])\/\d{4}$/';
 
@@ -220,7 +220,7 @@ class Validator extends BaseValidator
      * @return boolean
     */
 
-    public function validateFormatoCep($attribute, $value) 
+    public function validateFormatoCep($attribute, $value, $parameters = []) 
     {
         return preg_match('/^\d{2}\.?\d{3}-\d{3}$/', $value) > 0;
     }
@@ -233,7 +233,7 @@ class Validator extends BaseValidator
      * @return boolean
      */
 
-    public function validateFormatoPlacaDeVeiculo($attribute, $value)
+    public function validateFormatoPlacaDeVeiculo($attribute, $value, $parameters = [])
     {
         return preg_match('/^[a-zA-Z]{3}\-?[0-9]{4}$/', $value) > 0;
     }
