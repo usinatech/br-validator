@@ -82,6 +82,20 @@ class Validator extends BaseValidator
     }
 
     /**
+     * Valida o formato do CNPJ numérico legado e do CNPJ alfanumérico.
+     * Os 12 primeiros caracteres podem ser letras e números; os 2 últimos
+     * permanecem como dígitos verificadores numéricos.
+     *
+     * @param string $attribute
+     * @param string $value
+     * @return boolean
+     */
+    protected function validateFormatoCnpjAlfanumerico($attribute, $value, $parameters = [])
+    {
+        return preg_match('/^[A-Za-z0-9]{2}\.[A-Za-z0-9]{3}\.[A-Za-z0-9]{3}\/[A-Za-z0-9]{4}-\d{2}$/', $value) > 0;
+    }
+
+    /**
     * Valida se o CPF é válido
     * @param string $attribute
     * @param string $value

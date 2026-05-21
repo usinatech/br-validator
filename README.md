@@ -1,110 +1,83 @@
-# Laravel 8 - Validações Brasileiras em Português
+# br-validator
 
-Biblioteca com validações para CPF, CNPJ, Telefone com DDD, Placas do Mercosul e etc.
+Biblioteca com validacoes brasileiras para Laravel 11, 12 e 13.
 
+## Requisitos
 
-## Instalação
+- PHP 8.2+
+- Illuminate Support 11, 12 ou 13
 
-Navegue até a pasta do seu projeto, por exemplo:
+## Instalacao
 
-```
-cd /var/www/projeto
-```
-
-Execute:
-
-```
+```bash
 composer require usinatech/br-validator
 ```
 
-Agora, para utilizar a validação, basta fazer o procedimento padrão do `Laravel`.
+O package provider e carregado automaticamente pelo Laravel.
 
-A diferença é que será possível usar os seguintes métodos de validação:
+## Regras disponiveis
 
-* **`celular`** - Valida se o campo está no formato (**`99999-9999`** ou **`9999-9999`**)
+- `celular`
+- `celular_com_ddd`
+- `cnh`
+- `cnpj`
+- `cpf`
+- `data`
+- `formato_cep`
+- `formato_cnpj`
+- `formato_cnpj_alfanumerico`
+- `formato_cpf`
+- `formato_placa_de_veiculo`
+- `telefone`
+- `telefone_com_ddd`
 
-*  **`celular_com_ddd`** - Valida se o campo está no formato (**`(99)99999-9999`** ou **`(99)9999-9999`** ou **`(99) 99999-9999`** ou **`(99) 9999-9999`**)
+As regras acima usam `snake_case` como formato canonico. Alias com hifen, como `telefone-com-ddd`, continuam aceitos por compatibilidade.
 
-* **`cnpj`** - Valida se o campo é um CNPJ válido. 
-
-* **`cpf`** - Valida se o campo é um CPF válido.
-
-* **`data`** - Valida se o campo é uma data no formato `DD/MM/YYYY`<sup>*</sup>. Por exemplo: `31/12/1969`.
-
-* **`formato_cnpj`** - Valida se o campo tem uma máscara de CNPJ correta (**`99.999.999/9999-99`**).
-
-* **`formato_cpf`** - Valida se o campo tem uma máscara de CPF correta (**`999.999.999-99`**).
-
-* **`formato_cep`** - Valida se o campo tem uma máscara de correta (**`99999-999`** ou **`99.999-999`**).
-
-* **`telefone`** - Valida se o campo tem umas máscara de telefone (**`9999-9999`**).
-
-* **`telefone_com_ddd`** - Valida se o campo tem umas máscara de telefone com DDD (**`(99)9999-9999`** ou **`(99) 9999-9999`**).
-
-* **`formato_placa_de_veiculo`** - Valida se o campo tem o formato válido de uma placa de veículo.
-
-### Testando
-
-Com isso, é possível fazer um teste simples
-
+## Exemplo rapido
 
 ```php
-
 $validator = \Validator::make(
-    ['telefone' => '(77)9999-3333'],
+    ['telefone' => '(77) 9999-3333'],
     ['telefone' => 'required|telefone_com_ddd']
 );
 
 dd($validator->fails());
-
 ```
 
-Você pode utilizá-lo também com a instância de `Illuminate\Http\Request`, através do método `validate`.
-
-Veja:
+Tambem e possivel usar as regras em requests do Laravel:
 
 ```php
-
 use Illuminate\Http\Request;
 
-// URL: /testando?telefone=3455-1222
-
 Route::get('testando', function (Request $request) {
+    $dados = $request->validate([
+        'telefone' => 'required|telefone',
+        'cpf' => 'nullable|cpf',
+    ]);
 
-    try{
-
-        $dados = $request->validate([
-            'telefone' => 'required|telefone',
-            // outras validações aqui
-        ]);
-
-    } catch (\Illuminate\Validation\ValidationException $e) {
-        dd($e->errors());
-    }
-
+    return $dados;
 });
-
 ```
 
-
-### Customizando as mensagens
-
-Todas as validações citadas acima já contam mensagens padrões de validação, porém, é possível alterar isto usando o terceiro parâmetro de `Validator::make`. Este parâmetro deve ser um array onde os índices sejam os nomes das validações e os valores devem ser as respectivas mensagens.
-
-Por exemplo:
-
+## Mensagens personalizadas
 
 ```php
-Validator::make($valor, $regras, ['celular_com_ddd' => 'O campo :attribute não é um celular'])
+Validator::make($valor, $regras, [
+    'celular_com_ddd' => 'O campo :attribute nao e um celular valido.',
+]);
 ```
 
-Ou através do método `messages` do seu Request criado pelo comando `php artisan make:request`.
+## Testes
 
-```php
-public function messages() {
-
-    return [
-        'campo.telefone' => 'Telefone não válido!'
-    ];
-}
+```bash
+composer install
+composer test
 ```
+
+## Observacoes
+
+- `data` valida o formato `DD/MM/AAAA`.
+- `formato_cep` aceita `99999-999` e `99.999-999`.
+- `formato_cnpj` continua aceitando apenas `99.999.999/9999-99`.
+- `formato_cnpj_alfanumerico` aceita tanto `99.999.999/9999-99` quanto o novo padrão com 12 posições alfanumericas e 2 digitos verificadores numericos, por exemplo `A3.08B.58C/0D01-20`.
+- `formato_placa_de_veiculo` aceita `ABC-1234` e `ABC1234`.

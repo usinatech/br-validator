@@ -1,26 +1,17 @@
 <?php
 
-use UsinaTech\BrValidator\Validator;
-
-class TestValidator extends Orchestra\Testbench\TestCase
+class ValidatorTest extends PackageTestCase
 {
-
-    protected function getPackageProviders($app)
-    {
-        return ['UsinaTech\BrValidator\ValidatorProvider'];
-    }
-    
     public function testTelefoneComDdd()
     {
-        
         $correct = \Validator::make(
             ['certo' => '(99)3500-4444'],
-            ['certo' => 'telefone-com-ddd']
+            ['certo' => 'telefone_com_ddd']
         );
 
         $incorrect = \Validator::make(
             ['errado' => '(99)9-1926'],
-            ['errado' => 'telefone-com-ddd']
+            ['errado' => 'telefone_com_ddd']
         );
 
         $this->assertTrue($correct->passes());
@@ -33,12 +24,12 @@ class TestValidator extends Orchestra\Testbench\TestCase
     {
         $correct = \Validator::make(
             ['certo' => '(99)98899-4444'],
-            ['certo' => 'celular-com-ddd']
+            ['certo' => 'celular_com_ddd']
         );
 
         $incorrect = \Validator::make(
             ['errado' => '(99)800-1926'],
-            ['errado' => 'celular-com-ddd']
+            ['errado' => 'celular_com_ddd']
         );
 
         $this->assertTrue($correct->passes());
@@ -103,12 +94,12 @@ class TestValidator extends Orchestra\Testbench\TestCase
     {
         $correct = \Validator::make(
             ['certo' => '094.050.986-59'],
-            ['certo' => 'formato-cpf']
+            ['certo' => 'formato_cpf']
         );
 
         $incorrect = \Validator::make(
             ['errado' => '094.050.986-591'],
-            ['errado' => 'formato-cpf']
+            ['errado' => 'formato_cpf']
         );
 
         $this->assertTrue($correct->passes());
@@ -161,17 +152,45 @@ class TestValidator extends Orchestra\Testbench\TestCase
     {
         $correct = \Validator::make(
             ['certo' => '53.084.587/0001-20'],
-            ['certo' => 'formato-cnpj']
+            ['certo' => 'formato_cnpj']
         );
 
         $incorrect = \Validator::make(
             ['errado' => '51.084.587/000120'],
-            ['errado' => 'formato-cnpj']
+            ['errado' => 'formato_cnpj']
         );
 
         $this->assertTrue($correct->passes());
 
         $this->assertTrue($incorrect->fails()); 
+    }
+
+    public function testCnpjFormatoAlfanumerico()
+    {
+        $legacyFormat = \Validator::make(
+            ['certo' => '53.084.587/0001-20'],
+            ['certo' => 'formato_cnpj_alfanumerico']
+        );
+
+        $newFormat = \Validator::make(
+            ['certo' => 'A3.08B.58C/0D01-20'],
+            ['certo' => 'formato_cnpj_alfanumerico']
+        );
+
+        $invalidVerifier = \Validator::make(
+            ['errado' => 'A3.08B.58C/0D01-2X'],
+            ['errado' => 'formato_cnpj_alfanumerico']
+        );
+
+        $invalidMask = \Validator::make(
+            ['errado' => 'A3-08B-58C/0D01-20'],
+            ['errado' => 'formato_cnpj_alfanumerico']
+        );
+
+        $this->assertTrue($legacyFormat->passes());
+        $this->assertTrue($newFormat->passes());
+        $this->assertTrue($invalidVerifier->fails());
+        $this->assertTrue($invalidMask->fails());
     }
 
     public function testCnh()
@@ -189,6 +208,28 @@ class TestValidator extends Orchestra\Testbench\TestCase
         $this->assertTrue($correct->passes());
 
         $this->assertTrue($incorrect->fails()); 
+    }
+
+    public function testHyphenatedRuleAliases()
+    {
+        $validator = \Validator::make(
+            [
+                'telefone' => '(99)3500-4444',
+                'celular' => '(99)98899-4444',
+                'cpf' => '094.050.986-59',
+                'cnpj' => '53.084.587/0001-20',
+                'cnpj_alfanumerico' => 'A3.08B.58C/0D01-20',
+            ],
+            [
+                'telefone' => 'telefone-com-ddd',
+                'celular' => 'celular-com-ddd',
+                'cpf' => 'formato-cpf',
+                'cnpj' => 'formato-cnpj',
+                'cnpj_alfanumerico' => 'formato-cnpj-alfanumerico',
+            ]
+        );
+
+        $this->assertTrue($validator->passes());
     }
 
     public function testDate()
@@ -221,8 +262,7 @@ class TestValidator extends Orchestra\Testbench\TestCase
         ];
 
 
-        foreach($datasValidas as $data)
-        {
+        foreach ($datasValidas as $data) {
             $correct = \Validator::make(
                 ['certo' => $data],
                 ['certo' => 'data']
@@ -262,7 +302,6 @@ class TestValidator extends Orchestra\Testbench\TestCase
 
 
         foreach ($cepsInvalidos as $cep) {
-            
             $correct = \Validator::make(['cep' => $cep], ['cep' => 'formato_cep']);
 
             $this->assertTrue($correct->fails());
